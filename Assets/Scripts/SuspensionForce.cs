@@ -1,56 +1,58 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class SuspensionForce : MonoBehaviour
 {
     [SerializeField] Rigidbody carRb;
     [SerializeField] LayerMask layerMask;
-    private bool initialized;
+    [SerializeField] Transform[] wheels;
+    [SerializeField] GameObject[] wheelMeshes;
 
-    private float suspensionRestDist = 0.5f;
-    private float springPower = 20000f;
-    private float springDamper = 2500;
-
-    public void Initialize(float _suspensionRestDist, float _springPower, float _springDamper)
-    {
-
-        suspensionRestDist = _suspensionRestDist;
-        springPower = _springPower;
-        springDamper = _springDamper;
-
-        initialized = true;
-    }
-
-    private void Awake()
-    {
-        carRb = GetComponentInParent<Rigidbody>();
-        layerMask = LayerMask.GetMask("Ground");
-    }
+    [SerializeField] private float suspensionRestDist;
+    [SerializeField] private float springPower;
+    [SerializeField] private float springDamper;
+    [SerializeField] private float wheelRadius;
 
     private void FixedUpdate()
     {
-        if (!initialized) return;
-
-        Ray ray = new Ray(transform.position, -transform.up);
-
-        // check if ray hit ground
-        if (Physics.Raycast(ray, out RaycastHit hit, suspensionRestDist, layerMask))
+        for (int i = 0; i < wheels.Length; i++)
         {
-            // Spring Force
-            float offset = (suspensionRestDist - hit.distance)/suspensionRestDist;
-            float springForce = springPower * offset;
+            Ray ray = new Ray(wheels[i].transform.position, -wheels[i].transform.up);
 
-            // Damping Force
-            Vector3 tireWorldVel = carRb.GetPointVelocity(transform.position);
-            float vel = Vector3.Dot(tireWorldVel, transform.up);
-            float dampingForce = vel * springDamper;
+            // check if ray hit ground
+            if (Physics.Raycast(ray, out RaycastHit hit, suspensionRestDist, layerMask))
+            {
+                // Spring Force
+                float offset = (suspensionRestDist - hit.distance) / suspensionRestDist;
+                float springForce = springPower * offset;
 
-            // Suspension Force
-            float suspensionForce = springForce - dampingForce;
-            carRb.AddForceAtPosition(transform.up * suspensionForce, transform.position);
+                // Damping Force
+                Vector3 tireWorldVel = carRb.GetPointVelocity(wheels[i].transform.position);
+                float vel = Vector3.Dot(tireWorldVel, wheels[i].transform.up);
+                float dampingForce = vel * springDamper;
+
+                // Suspension Force
+                float suspensionForce = springForce - dampingForce;
+                carRb.AddForceAtPosition(wheels[i].transform.up * suspensionForce, wheels[i].transform.position);
+
+                wheelMeshes[i].transform.localPosition = new Vector3(
+                    wheelMeshes[i].transform.localPosition.x,
+                    (wheelRadius - hit.distance) / wheels[i].lossyScale.y,
+                    wheelMeshes[i].transform.localPosition.z
+                    );
+            }
+            else
+            {
+                wheelMeshes[i].transform.localPosition = new Vector3(
+                    wheelMeshes[i].transform.localPosition.x,
+                    (wheelRadius - suspensionRestDist) / wheels[i].lossyScale.y,
+                    wheelMeshes[i].transform.localPosition.z
+                    );
+            }
+            Debug.DrawRay(wheels[i].transform.position, -wheels[i].transform.up * suspensionRestDist, Color.green, Time.fixedDeltaTime);
         }
-        Debug.DrawRay(transform.position, -transform.up*suspensionRestDist, Color.green, Time.fixedDeltaTime);
     }
 }
