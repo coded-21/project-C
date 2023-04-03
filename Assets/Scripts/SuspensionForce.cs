@@ -15,6 +15,9 @@ public class SuspensionForce : MonoBehaviour
     [SerializeField] private float springPower;
     [SerializeField] private float springDamper;
     [SerializeField] private float wheelRadius;
+    [SerializeField] private float wheelMass;
+    [Range(0f,1f)]
+    [SerializeField] private float wheelGripFactor;
 
     private void FixedUpdate()
     {
@@ -43,6 +46,16 @@ public class SuspensionForce : MonoBehaviour
                     (wheelRadius - hit.distance) / wheels[i].lossyScale.y,
                     wheelMeshes[i].transform.localPosition.z
                     );
+
+                // traction force
+                Vector3 steeringDir = wheels[i].transform.right;
+
+                float wheelSidewaysVelocity = Vector3.Dot(carRb.GetPointVelocity(wheels[i].position), steeringDir);
+                float desiredVelChange = -wheelSidewaysVelocity * wheelGripFactor;
+                float desiredAcc = desiredVelChange / Time.fixedDeltaTime;
+                float tractionForce = desiredAcc * wheelMass;
+
+                carRb.AddForceAtPosition(tractionForce * steeringDir, wheels[i].transform.position);
             }
             else
             {
