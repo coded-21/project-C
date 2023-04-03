@@ -9,9 +9,9 @@ public class SuspensionForce : MonoBehaviour
     [SerializeField] LayerMask layerMask;
     private bool initialized;
 
-    private float suspensionRestDist;
-    private float springPower;
-    private float springDamper;
+    private float suspensionRestDist = 0.5f;
+    private float springPower = 20000f;
+    private float springDamper = 2500;
 
     public void Initialize(float _suspensionRestDist, float _springPower, float _springDamper)
     {
@@ -51,6 +51,6 @@ public class SuspensionForce : MonoBehaviour
             float suspensionForce = springForce - dampingForce;
             carRb.AddForceAtPosition(transform.up * suspensionForce, transform.position);
         }
-        Debug.DrawRay(transform.position, -transform.up, Color.green, Time.deltaTime);
+        Debug.DrawRay(transform.position, -transform.up*suspensionRestDist, Color.green, Time.fixedDeltaTime);
     }
 }
