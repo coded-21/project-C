@@ -1131,6 +1131,7 @@ GameObject:
   - component: {fileID: 1546842190}
   - component: {fileID: 1546842191}
   - component: {fileID: 1546842192}
+  - component: {fileID: 1546842193}
   m_Layer: 6
   m_Name: Car
   m_TagString: Untagged
@@ -1216,6 +1217,29 @@ MonoBehaviour:
   wheelRadius: 0.45
   wheelMass: 20
   wheelGripFactor: 1
+--- !u!114 &1546842193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1546842188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f3d7fdfbc8b4406c900d243d3fe975b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rb: {fileID: 1546842190}
+  rearWheels:
+  - {fileID: 589022776}
+  - {fileID: 1294311955}
+  frontWheels:
+  - {fileID: 1417227082}
+  - {fileID: 855501440}
+  rearWheelDrive: 0
+  horsepower: 5000
+  maxSteeringAngle: 28
+  brakeForce: 10000
 --- !u!1 &1718641955
 GameObject:
   m_ObjectHideFlags: 0

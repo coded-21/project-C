@@ -11,6 +11,7 @@ public class SuspensionForce : MonoBehaviour
     [SerializeField] Transform[] wheels;
     [SerializeField] GameObject[] wheelMeshes;
 
+    [Header("Car Stats")]
     [SerializeField] private float suspensionRestDist;
     [SerializeField] private float springPower;
     [SerializeField] private float springDamper;
