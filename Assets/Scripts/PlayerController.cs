@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Rigidbody rb;
     [SerializeField] float jumpForce;
     [SerializeField] float moveSpeed;
+    [SerializeField] float maxSpeed;
 
     private void Awake()
     {
@@ -17,15 +18,19 @@ public class PlayerController : MonoBehaviour
     public void Moved(InputAction.CallbackContext context)
     {
         Vector2 input = context.ReadValue<Vector2>();
-        Vector3 moveDirection = new Vector3(input.x, 0, input.y).normalized;
+        Vector3 moveDirection = new Vector3(input.x, 0, input.y).normalized * moveSpeed;
         if (context.performed)
         {
-            rb.velocity = new Vector3(input.x, rb.velocity.y,input.y);
+            Vector3 desiredVel = new Vector3(moveDirection.x, rb.velocity.y, moveDirection.z);
+            rb.velocity = desiredVel;
+            //rb.AddForce(moveSpeed * moveDirection * Time.fixedDeltaTime, ForceMode.VelocityChange);
             transform.rotation = Quaternion.LookRotation(moveDirection , Vector3.up);
         }
-        else if (context.canceled)
+
+        if (context.canceled)
         {
-            rb.velocity = Vector3.zero;
+            Vector3 desiredVel = new Vector3(0, rb.velocity.y, 0);
+            rb.velocity = desiredVel;
         }
     }
 
