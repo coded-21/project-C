@@ -931,7 +931,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1016584383}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.4, y: 2, z: -0.5}
+  m_LocalPosition: {x: 4.4, y: 3.71, z: -0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -954,7 +954,8 @@ MonoBehaviour:
   rb: {fileID: 1016584387}
   jumpForce: 500
   moveSpeed: 4
-  maxSpeed: 1
+  frictionValue: 0.3
+  playerPhysicsMat: {fileID: 13400000, guid: 860630b3c36b14ddc8fe5db1fec6530d, type: 2}
 --- !u!114 &1016584386
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1620,7 +1621,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1546842189
 Transform:
   m_ObjectHideFlags: 0

@@ -8,29 +8,41 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Rigidbody rb;
     [SerializeField] float jumpForce;
     [SerializeField] float moveSpeed;
-    [SerializeField] float maxSpeed;
+    [Range(0,0.8f)] [SerializeField] float frictionValue;
+    [SerializeField] PhysicMaterial playerPhysicsMat;
+    private Vector2 moveInput;
+    private bool jumpPressed;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
     }
 
+    private void FixedUpdate()
+    {
+        Vector3 flatVelocity = new Vector3(moveInput.x, 0, moveInput.y).normalized * moveSpeed;
+        Vector3 desiredVelocity = new Vector3(flatVelocity.x, rb.velocity.y, flatVelocity.z);
+        rb.velocity = desiredVelocity;
+
+        if (jumpPressed)
+        {
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            jumpPressed = false;
+        }
+    }
+
     public void Moved(InputAction.CallbackContext context)
     {
-        Vector2 input = context.ReadValue<Vector2>();
-        Vector3 moveDirection = new Vector3(input.x, 0, input.y).normalized * moveSpeed;
         if (context.performed)
         {
-            Vector3 desiredVel = new Vector3(moveDirection.x, rb.velocity.y, moveDirection.z);
-            rb.velocity = desiredVel;
-            //rb.AddForce(moveSpeed * moveDirection * Time.fixedDeltaTime, ForceMode.VelocityChange);
-            transform.rotation = Quaternion.LookRotation(moveDirection , Vector3.up);
+            moveInput = context.ReadValue<Vector2>();
+            Vector3 dir = new Vector3(moveInput.x, 0, moveInput.y).normalized;
+            transform.rotation = Quaternion.LookRotation(dir, Vector3.up);
         }
 
         if (context.canceled)
         {
-            Vector3 desiredVel = new Vector3(0, rb.velocity.y, 0);
-            rb.velocity = desiredVel;
+            moveInput = new Vector2(0, 0);
         }
     }
 
@@ -38,8 +50,7 @@ public class PlayerController : MonoBehaviour
     {
         if (context.started)
         {
-            Debug.Log("jumped");
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            jumpPressed = true;
         }
     }
 }
